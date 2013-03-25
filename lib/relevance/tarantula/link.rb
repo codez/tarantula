@@ -10,7 +10,7 @@ module Relevance
         def protect_against_forgery?
           false
         end
-        #fast fix for rails3 
+        #fast fix for rails3
         def method_javascript_function(method, url = '', href = nil)
           action = (href && url.size > 0) ? "'#{url}'" : 'this.href'
           submit_function =
@@ -27,11 +27,11 @@ module Relevance
             submit_function << "s.setAttribute('name', '#{request_forgery_protection_token}'); s.setAttribute('value', '#{escape_javascript form_authenticity_token}'); f.appendChild(s);"
           end
           submit_function << "f.submit();"
-        end    
+        end
       end
 
       METHOD_REGEXPS = {}
-      [:put, :delete, :post].each do |m|
+      [:put, :delete, :post, :patch].each do |m|
         # remove submit from the end so we'll match with or without forgery protection
         s = method_javascript_function(m).gsub( /f.submit();/, "" )
         # don't just match this.href in case a different url was passed originally
@@ -69,8 +69,9 @@ module Relevance
       def method
         @method ||= begin
                       (@tag &&
-                       [:put, :delete, :post].detect do |m| # post should be last since it's least specific
-                        @tag['onclick'] =~ METHOD_REGEXPS[m]
+                       [:put, :delete, :post, :patch].detect do |m| # post should be last since it's least specific
+                        @tag['onclick'] =~ METHOD_REGEXPS[m] ||
+                        @tag['data-method'] == m.to_s.downcase
                        end) ||
                          :get
                     end
