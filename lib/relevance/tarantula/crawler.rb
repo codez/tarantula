@@ -63,7 +63,7 @@ module Relevance
         @times_to_crawl.times do |num|
           queue_link url
 
-          begin 
+          begin
             do_crawl num
           rescue CrawlTimeout => e
             puts
@@ -140,7 +140,7 @@ module Relevance
       def make_result(options)
         defaults = {
           :log       => grab_log!,
-          :test_name => test_name      
+          :test_name => test_name
         }
         Result.new(defaults.merge(options)).freeze
       end
@@ -189,7 +189,7 @@ module Relevance
       def queue_link(dest, referrer = nil)
         dest = Link.new(dest, self, referrer)
         return if should_skip_link?(dest)
-        @crawl_queue << dest
+        append_to_queue(dest)
         @links_queued << dest
         dest
       end
@@ -201,9 +201,18 @@ module Relevance
             fs.action = transform_url(fs.action)
             return if should_skip_form_submission?(fs)
             @referrers[fs.action] = referrer if referrer
-            @crawl_queue << fs
+            append_to_queue(fs)
             @form_signatures_queued << fs.signature
           end
+        end
+      end
+
+      # append delete requests to the end of the queue, all others just before the first delete request
+      def append_to_queue(request)
+        if request.method != 'delete' && index = @crawl_queue.index {|r| r.method == 'delete' }
+          @crawl_queue.insert(index, request)
+        else
+          @crawl_queue << request
         end
       end
 
