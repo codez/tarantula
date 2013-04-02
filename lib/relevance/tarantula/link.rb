@@ -74,7 +74,7 @@ module Relevance
                         @tag['data-method'] == m.to_s.downcase
                        end) ||
                          :get
-                    end
+                    end.to_s
       end
 
       def transform_url(link)
