@@ -98,7 +98,7 @@ module Relevance
       end
 
       def crawl_the_queue(number = 0)
-        while (request = @crawl_queue.pop)
+        while (request = @crawl_queue.shift)
           request.crawl
           blip(number)
         end
