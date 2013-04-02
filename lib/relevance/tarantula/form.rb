@@ -12,7 +12,7 @@ module Relevance
       end
 
       def action
-        @tag['action'].downcase
+        @tag['action']
       end
 
       def method

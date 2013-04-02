@@ -48,7 +48,7 @@ module Relevance
           @href = transform_url(link)
           @method = :get
         else # should be a tag
-          @href = link['href'] ? transform_url(link['href'].downcase) : nil
+          @href = link['href'] ? transform_url(link['href']) : nil
           @tag = link
         end
       end
