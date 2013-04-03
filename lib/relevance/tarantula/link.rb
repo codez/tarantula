@@ -17,7 +17,7 @@ module Relevance
             "var f = document.createElement('form'); f.style.display = 'none'; " +
             "this.parentNode.appendChild(f); f.method = 'POST'; f.action = #{action};"
 
-          unless method == :post
+          unless method == 'post'
             submit_function << "var m = document.createElement('input'); m.setAttribute('type', 'hidden'); "
             submit_function << "m.setAttribute('name', '_method'); m.setAttribute('value', '#{method}'); f.appendChild(m);"
           end
@@ -31,7 +31,7 @@ module Relevance
       end
 
       METHOD_REGEXPS = {}
-      [:put, :delete, :post, :patch].each do |m|
+      %w(put delete post patch).each do |m|
         # remove submit from the end so we'll match with or without forgery protection
         s = method_javascript_function(m).gsub( /f.submit();/, "" )
         # don't just match this.href in case a different url was passed originally
@@ -46,7 +46,7 @@ module Relevance
 
         if String === link || link.nil?
           @href = transform_url(link)
-          @method = :get
+          @method = 'get'
         else # should be a tag
           @href = link['href'] ? transform_url(link['href']) : nil
           @tag = link
@@ -69,12 +69,12 @@ module Relevance
       def method
         @method ||= begin
                       (@tag &&
-                       [:put, :delete, :post, :patch].detect do |m| # post should be last since it's least specific
+                       %w(put delete post patch).detect do |m| # post should be last since it's least specific
                         @tag['onclick'] =~ METHOD_REGEXPS[m] ||
-                        @tag['data-method'] == m.to_s.downcase
+                        @tag['data-method'] == m
                        end) ||
-                         :get
-                    end.to_s
+                         'get'
+                    end
       end
 
       def transform_url(link)

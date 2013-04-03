@@ -6,67 +6,67 @@ describe "Relevance::Tarantula::Link" do
   it "does not raise an error when initializing without href attribtue" do
     link = make_link(Hpricot('<a="/foo">foo</a>').at('a'))
     link.href.should == nil
-    link.method.should == :get    
+    link.method.should == 'get'
   end
 
   it "parses anchor tags" do
     link = make_link(Hpricot('<a href="/foo">foo</a>').at('a'))
     link.href.should == '/foo'
-    link.method.should == :get
+    link.method.should == 'get'
   end
 
   it "parses anchor tags with POST 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:post)}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('post')}">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :post
+    link.method.should == 'post'
   end
 
   it "parses anchor tags with POST data-method" do
     link = make_link(Hpricot(%Q{<a href="/foo" data-method="post">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :post
+    link.method.should == 'post'
   end
   
   it "parses anchor tags with PUT 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:put)}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('put')}">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :put
+    link.method.should == 'put'
   end
 
   it "parses anchor tags with PUT data-method" do
     link = make_link(Hpricot(%Q{<a href="/foo" data-method="put">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :put
+    link.method.should == 'put'
   end
   
   it "parses anchor tags with PATCH data-method" do
     link = make_link(Hpricot(%Q{<a href="/foo" data-method="patch">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :patch
+    link.method.should == 'patch'
   end
   
   it "parses anchor tags with DELETE 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:delete)}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('delete')}">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :delete
+    link.method.should == 'delete'
   end
 
   it "parses anchor tags with DELETE data-method" do
     link = make_link(Hpricot(%Q{<a href="/foo" data-method="delete">foo</a>}).at('a'))
     link.href.should == '/foo'
-    link.method.should == :delete
+    link.method.should == 'delete'
   end
   
   it "parses link tags with text" do
     link = make_link(Hpricot('<link href="/bar">bar</a>').at('link'))
     link.href.should == '/bar'
-    link.method.should == :get
+    link.method.should == 'get'
   end
   
   it "parses link tags without text" do
     link = make_link(Hpricot('<link href="/bar" />').at('link'))
     link.href.should == '/bar'
-    link.method.should == :get
+    link.method.should == 'get'
   end
   
   it 'remembers link referrer if there is one' do
