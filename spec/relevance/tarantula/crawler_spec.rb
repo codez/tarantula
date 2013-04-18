@@ -111,6 +111,39 @@ describe Relevance::Tarantula::Crawler do
       crawler.queue_link('/url', '/some-referrer')
     end
     
+    it "queues DELETE requests at the end, everything else before" do
+      crawler = Relevance::Tarantula::Crawler.new
+      create_link = Hpricot('<a href="/create" data-method="post">Create</a>').at('a')
+      crawler.queue_link(create_link)
+      create_link = Relevance::Tarantula::Link.new(create_link, crawler, nil)
+      crawler.crawl_queue.should == [create_link]
+      delete_link = Hpricot('<a href="/destroy" data-method="delete">Destroy</a>').at('a')
+      crawler.queue_link(delete_link)
+      delete_link = Relevance::Tarantula::Link.new(delete_link, crawler, nil)
+      crawler.crawl_queue.should == [create_link, delete_link]
+      get_link = Hpricot('<a href="/read">Show</a>').at('a')
+      crawler.queue_link(get_link)
+      get_link = Relevance::Tarantula::Link.new(get_link, crawler, nil)
+      crawler.crawl_queue.should == [create_link, get_link, delete_link]
+    end
+    
+    it "queues is crawled from tip not tail" do
+      crawler = Relevance::Tarantula::Crawler.new
+      
+      create_link = Hpricot('<a href="/create" data-method="post">Create</a>').at('a')
+      crawler.queue_link(create_link)
+      delete_link = Hpricot('<a href="/destroy" data-method="delete">Destroy</a>').at('a')
+      crawler.queue_link(delete_link)
+      get_link = Hpricot('<a href="/read">Show</a>').at('a')
+      crawler.queue_link(get_link)
+      
+      q = sequence('queue')
+      response = stub(:code => "200")
+      crawler.expects(:follow).with('post', '/create').returns(response).in_sequence(q)
+      crawler.expects(:follow).with('get', '/read').returns(response).in_sequence(q)
+      crawler.expects(:follow).with('delete', '/destroy').returns(response).in_sequence(q)
+      crawler.do_crawl(0)
+    end
   end
   
   describe "crawling" do
