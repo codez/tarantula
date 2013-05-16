@@ -13,22 +13,22 @@ describe "Relevance::Tarantula::Form large example" do
 END
     @form = make_form(@tag.at('form'))
   end
-  
+
   it "has an action" do
     @form.action.should == "/session"
   end
-  
+
   it "has a method" do
-    @form.method.should == "post"
+    @form.meth.should == "post"
   end
-  
+
 end
 
 describe "A Relevance::Tarantula::Form" do
   it "defaults method to 'get'" do
     @tag = Hpricot("<form/>")
     @form = make_form(@tag.at('form'))
-    @form.method.should == 'get'
+    @form.meth.should == 'get'
   end
 end
 
@@ -44,7 +44,7 @@ END
   end
 
   it "has a method" do
-    @form.method.should == "put"
+    @form.meth.should == "put"
   end
-  
+
 end

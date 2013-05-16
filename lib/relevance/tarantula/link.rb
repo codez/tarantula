@@ -54,20 +54,20 @@ module Relevance
       end
 
       def crawl
-        response = crawler.follow(method, href)
+        response = crawler.follow(meth, href)
         log "Response #{response.code} for #{self}"
         crawler.handle_link_results(self, make_result(response))
       end
 
       def make_result(response)
-        crawler.make_result(:method    => method,
+        crawler.make_result(:method    => meth,
                             :url       => href,
                             :response  => response,
                             :referrer  => referrer)
       end
 
-      def method
-        @method ||= begin
+      def meth
+        @meth ||= begin
                       (@tag &&
                        %w(put delete post patch).detect do |m| # post should be last since it's least specific
                         @tag['onclick'] =~ METHOD_REGEXPS[m] ||
@@ -83,7 +83,7 @@ module Relevance
 
       def ==(obj)
         obj.respond_to?(:href) && obj.respond_to?(:method) &&
-          self.href.to_s == obj.href.to_s && self.method.to_s == obj.method.to_s
+          self.href.to_s == obj.href.to_s && self.meth.to_s == obj.meth.to_s
       end
       alias :eql? :==
 
@@ -92,7 +92,7 @@ module Relevance
         end
 
       def to_s
-        "<Relevance::Tarantula::Link href=#{href}, method=#{method}>"
+        "<Relevance::Tarantula::Link href=#{href}, method=#{meth}>"
       end
 
     end

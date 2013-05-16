@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Relevance::Tarantula::Crawler do
-  
+
   describe "transform_url" do
 
     before { @crawler = Relevance::Tarantula::Crawler.new }
@@ -10,13 +10,13 @@ describe Relevance::Tarantula::Crawler do
       obfuscated_mailto = "&#109;&#97;&#105;&#108;&#116;&#111;&#58;"
       @crawler.transform_url(obfuscated_mailto).should == "mailto:"
     end
-  
+
     it "strips the trailing name portion of a link" do
       @crawler.transform_url('http://host/path#name').should == 'http://host/path'
     end
   end
-  
-  
+
+
   describe "log grabbing" do
 
     it "returns nil if no grabber is specified" do
@@ -29,11 +29,11 @@ describe Relevance::Tarantula::Crawler do
       crawler.log_grabber = stub(:grab! => "fake log entry")
       crawler.grab_log!.should == "fake log entry"
     end
-    
+
   end
-  
+
   describe "interrupt" do
-    
+
     it 'catches interruption and writes the partial report' do
       crawler = Relevance::Tarantula::Crawler.new
       crawler.stubs(:queue_link)
@@ -42,31 +42,31 @@ describe Relevance::Tarantula::Crawler do
       $stderr.expects(:puts).with("CTRL-C")
       crawler.crawl
     end
-    
+
   end
-  
+
   describe 'handle_form_results' do
-    
+
     it 'captures the result values (bugfix)' do
       response = stub_everything
-      result_args = {:url => :action_stub, 
-                      :data => 'nil', 
-                      :response => response, 
-                      :referrer => :action_stub, 
-                      :log => nil, 
+      result_args = {:url => :action_stub,
+                      :data => 'nil',
+                      :response => response,
+                      :referrer => :action_stub,
+                      :log => nil,
                       :method => :stub_method,
                       :test_name => nil}
       result = Relevance::Tarantula::Result.new(result_args)
       Relevance::Tarantula::Result.expects(:new).with(result_args).returns(result)
       crawler = Relevance::Tarantula::Crawler.new
-      crawler.handle_form_results(stub_everything(:method => :stub_method, :action => :action_stub), 
+      crawler.handle_form_results(stub_everything(:meth => :stub_method, :action => :action_stub),
                                   response)
     end
-    
+
   end
-  
+
   describe "crawl" do
-    
+
     it 'queues the first url, does crawl, and then reports results' do
       crawler = Relevance::Tarantula::Crawler.new
       crawler.expects(:queue_link).with("/foobar")
@@ -81,9 +81,9 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:report_results)
       lambda {crawler.crawl('/')}.should raise_error(RuntimeError)
     end
-    
+
   end
-  
+
   describe "queueing" do
 
     it 'queues and remembers links' do
@@ -107,10 +107,11 @@ describe Relevance::Tarantula::Crawler do
     it "passes link, self, and referrer when creating Link objects" do
       crawler = Relevance::Tarantula::Crawler.new
       Relevance::Tarantula::Link.expects(:new).with('/url', crawler, '/some-referrer')
+      crawler.expects(:append_to_queue)
       crawler.stubs(:should_skip_link?)
       crawler.queue_link('/url', '/some-referrer')
     end
-    
+
     it "queues DELETE requests at the end, everything else before" do
       crawler = Relevance::Tarantula::Crawler.new
       create_link = Hpricot('<a href="/create" data-method="post">Create</a>').at('a')
@@ -126,17 +127,17 @@ describe Relevance::Tarantula::Crawler do
       get_link = Relevance::Tarantula::Link.new(get_link, crawler, nil)
       crawler.crawl_queue.should == [create_link, get_link, delete_link]
     end
-    
+
     it "queues is crawled from tip not tail" do
       crawler = Relevance::Tarantula::Crawler.new
-      
+
       create_link = Hpricot('<a href="/create" data-method="post">Create</a>').at('a')
       crawler.queue_link(create_link)
       delete_link = Hpricot('<a href="/destroy" data-method="delete">Destroy</a>').at('a')
       crawler.queue_link(delete_link)
       get_link = Hpricot('<a href="/read">Show</a>').at('a')
       crawler.queue_link(get_link)
-      
+
       q = sequence('queue')
       response = stub(:code => "200")
       crawler.expects(:follow).with('post', '/create').returns(response).in_sequence(q)
@@ -145,20 +146,20 @@ describe Relevance::Tarantula::Crawler do
       crawler.do_crawl(0)
     end
   end
-  
+
   describe "crawling" do
     before do
       @form = Hpricot('<form action="/action" method="post"/>').at('form')
     end
-    
+
     it "does two things with each link: crawl and blip" do
       crawler = Relevance::Tarantula::Crawler.new
       crawler.proxy = stub
       crawler.crawl_queue = links = [make_link("/foo1", crawler), make_link("/foo2", crawler)]
-      
+
       links.each{|link| link.expects(:crawl)}
       crawler.expects(:blip).times(2)
-      
+
       crawler.crawl_the_queue
       crawler.crawl_queue.should == []
     end
@@ -170,7 +171,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:blip)
       crawler.crawl_the_queue
     end
-    
+
     # TODO this is the same as "resets to the initial links/forms ..." and doesn't appear to test anything related to a timeout.
     it "breaks out early if a timeout is set"
 
@@ -186,9 +187,9 @@ describe Relevance::Tarantula::Crawler do
       crawler.times_to_crawl = 2
       crawler.crawl
     end
-    
+
   end
-  
+
   describe "report_results" do
     it "prints a final summary line" do
       crawler = Relevance::Tarantula::Crawler.new
@@ -197,16 +198,16 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:puts).with("Crawled 42 links and forms.")
       crawler.report_results
     end
-    
+
     it "delegates to generate_reports" do
       crawler = Relevance::Tarantula::Crawler.new
       crawler.stubs(:puts)
       crawler.expects(:generate_reports)
       crawler.report_results
     end
-    
+
   end
-  
+
   describe "blip" do
 
     it "blips the current progress if !verbose" do
@@ -217,7 +218,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:print).with("\r 0 of 0 links completed               ")
       crawler.blip
     end
-    
+
     it "suppresses the blip message if not writing to a tty" do
       $stdout.stubs(:tty?).returns(false)
       crawler = Relevance::Tarantula::Crawler.new
@@ -226,7 +227,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:print).never
       crawler.blip
     end
-    
+
     it "blips nothing if verbose" do
       $stdout.stubs(:tty?).returns(true)
       crawler = Relevance::Tarantula::Crawler.new
@@ -234,9 +235,9 @@ describe Relevance::Tarantula::Crawler do
       crawler.expects(:print).never
       crawler.blip
     end
-    
+
   end
-  
+
   describe "finished?" do
 
     it "is finished when the links and forms are crawled" do
@@ -255,7 +256,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.crawl_queue = [:stub_form]
       crawler.finished?.should == false
     end
-    
+
   end
 
   it "crawls links and forms again and again until finished?==true" do
@@ -264,7 +265,7 @@ describe Relevance::Tarantula::Crawler do
     crawler.expects(:crawl_the_queue).times(2)
     crawler.do_crawl(1)
   end
-  
+
   it "asks each reporter to write its report in report_dir" do
     crawler = Relevance::Tarantula::Crawler.new
     crawler.stubs(:report_dir).returns(test_output_dir)
@@ -275,31 +276,31 @@ describe Relevance::Tarantula::Crawler do
     crawler.save_result stub(:code => "404", :url => "/uh-oh")
     crawler.generate_reports
   end
-  
+
   it "builds a report dir relative to rails root" do
     crawler = Relevance::Tarantula::Crawler.new
     crawler.expects(:rails_root).returns("faux_rails_root")
     crawler.report_dir.should == "faux_rails_root/tmp/tarantula"
   end
-  
+
   it "skips links that are already queued" do
     crawler = Relevance::Tarantula::Crawler.new
     crawler.should_skip_link?(make_link("/foo")).should == false
     crawler.queue_link("/foo").should == make_link("/foo")
     crawler.should_skip_link?(make_link("/foo")).should == true
   end
-  
+
   describe "link skipping" do
 
     before { @crawler = Relevance::Tarantula::Crawler.new }
-    
+
     it "skips links that are too long" do
       @crawler.should_skip_link?(make_link("/foo")).should == false
       @crawler.max_url_length = 2
       @crawler.expects(:log).with("Skipping long url /foo")
       @crawler.should_skip_link?(make_link("/foo")).should == true
     end
-  
+
     it "skips outbound links (those that begin with http)" do
       @crawler.expects(:log).with("Skipping http-anything")
       @crawler.should_skip_link?(make_link("http-anything")).should == true
@@ -314,29 +315,29 @@ describe Relevance::Tarantula::Crawler do
       @crawler.expects(:log).with("Skipping mailto-anything")
       @crawler.should_skip_link?(make_link("mailto-anything")).should == true
     end
-  
+
     it 'skips blank links' do
       @crawler.queue_link(nil)
       @crawler.crawl_queue.should == []
       @crawler.queue_link("")
       @crawler.crawl_queue.should == []
     end
-  
+
     it "logs and skips links that match a pattern" do
       @crawler.expects(:log).with("Skipping /the-red-button")
       @crawler.skip_uri_patterns << /red-button/
       @crawler.queue_link("/blue-button").should == make_link("/blue-button")
       @crawler.queue_link("/the-red-button").should == nil
-    end   
-  
+    end
+
     it "logs and skips form submissions that match a pattern" do
       @crawler.expects(:log).with("Skipping /reset-password-form")
-      @crawler.skip_uri_patterns << /reset-password/             
+      @crawler.skip_uri_patterns << /reset-password/
       fs = stub_everything(:action => "/reset-password-form")
       @crawler.should_skip_form_submission?(fs).should == true
     end
   end
-  
+
   describe "allow_nnn_for" do
 
     it "installs result as a response_code_handler" do
@@ -355,9 +356,9 @@ describe Relevance::Tarantula::Crawler do
       crawler = Relevance::Tarantula::Crawler.new
       lambda{crawler.foo}.should raise_error(NoMethodError)
     end
-    
+
   end
-  
+
   describe "timeouts" do
 
     it "sets start and end times for a single crawl" do
@@ -372,7 +373,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.crawl_start_times.first.should == start_time
       crawler.crawl_end_times.first.should == end_time
     end
-    
+
     it "has elasped time for a crawl" do
       start_time = Time.parse("March 1st, 2008 10:00am")
       elasped_time_check = Time.parse("March 1st, 2008, 10:10:00am")
@@ -384,7 +385,7 @@ describe Relevance::Tarantula::Crawler do
       crawler.crawl
       crawler.elasped_time_for_pass(0).should == 600.seconds
     end
-    
+
     it "raises out of the crawl if elasped time is greater then the crawl timeout" do
       start_time = Time.parse("March 1st, 2008 10:00am")
       elasped_time_check = Time.parse("March 1st, 2008, 10:35:00am")
@@ -392,17 +393,17 @@ describe Relevance::Tarantula::Crawler do
 
       crawler = Relevance::Tarantula::Crawler.new
       crawler.crawl_timeout = 5.minutes
-      
+
       crawler.crawl_queue = [stub(:href => "/foo1", :method => :get), stub(:href => "/foo2", :method => :get)]
       crawler.proxy = stub
       crawler.proxy.stubs(:get).returns(response = stub(:code => "200"))
-      
+
       stub_puts_and_print(crawler)
       lambda {
         crawler.do_crawl(0)
       }.should raise_error
     end
-    
+
   end
-  
+
 end

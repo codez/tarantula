@@ -15,7 +15,7 @@ module Relevance
         @tag['action']
       end
 
-      def method
+      def meth
         (rails_method_hack or @tag['method'] or 'get').downcase
       end
 
