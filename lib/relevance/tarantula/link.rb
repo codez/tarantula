@@ -76,6 +76,10 @@ module Relevance
                          'get'
                     end
       end
+      
+      def url
+        href
+      end
 
       def transform_url(link)
         crawler.transform_url(link)

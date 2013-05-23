@@ -45,6 +45,10 @@ module Relevance
       def self.mutate(form)
         attacks.map{|attack| new(form, attack)} if attacks
       end
+      
+      def url
+        action
+      end
 
       def to_s
         "#{action} #{meth} #{data.inspect} #{attack.inspect}"

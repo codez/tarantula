@@ -211,6 +211,8 @@ module Relevance
       def append_to_queue(request)
         if request.meth != 'delete' && index = @crawl_queue.index {|r| r.meth == 'delete' }
           @crawl_queue.insert(index, request)
+        elsif request.meth == 'delete' && parent_index = @crawl_queue.index {|r| r.meth == 'delete' && request.url.start_with?(r.url) }
+          @crawl_queue.insert(parent_index, request)
         else
           @crawl_queue << request
         end
