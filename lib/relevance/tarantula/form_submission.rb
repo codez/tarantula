@@ -76,7 +76,7 @@ module Relevance
         form.search('select').inject({}) do |form_args, select|
           options = select.search('option')
           option = options.sample
-          form_args[select['name']] = option['value']
+          form_args[select['name']] = option && option['value']
           form_args
         end
       end
