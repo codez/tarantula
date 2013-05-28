@@ -16,7 +16,7 @@ describe "Relevance::Tarantula::Link" do
   end
 
   it "parses anchor tags with POST 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('post')}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:post)}">foo</a>}).at('a'))
     link.href.should == '/foo'
     link.meth.should == :post
   end
@@ -28,7 +28,7 @@ describe "Relevance::Tarantula::Link" do
   end
 
   it "parses anchor tags with PUT 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('put')}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:put)}">foo</a>}).at('a'))
     link.href.should == '/foo'
     link.meth.should == :put
   end
@@ -46,7 +46,7 @@ describe "Relevance::Tarantula::Link" do
   end
 
   it "parses anchor tags with DELETE 'method'" do
-    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function('delete')}">foo</a>}).at('a'))
+    link = make_link(Hpricot(%Q{<a href="/foo" onclick="#{Relevance::Tarantula::Link.method_javascript_function(:delete)}">foo</a>}).at('a'))
     link.href.should == '/foo'
     link.meth.should == :delete
   end

@@ -147,7 +147,7 @@ module Relevance
 
       def handle_form_results(form, response)
         handlers.each do |h|
-          save_result h.handle(Result.new(:method => form.method,
+          save_result h.handle(Result.new(:method => form.meth,
                                           :url => form.action,
                                           :response => response,
                                           :log => grab_log!,
@@ -209,7 +209,7 @@ module Relevance
 
       # append delete requests to the end of the queue, all others just before the first delete request
       def append_to_queue(request)
-        if request.method != 'delete' && index = @crawl_queue.index {|r| r.method == 'delete' }
+        if request.meth.to_s != 'delete' && index = @crawl_queue.index {|r| r.meth.to_s == 'delete' }
           @crawl_queue.insert(index, request)
         else
           @crawl_queue << request

@@ -3,7 +3,7 @@ module Relevance
 
     class FormSubmission
       include Relevance::Tarantula
-      attr_accessor :method, :action, :data, :attack, :form
+      attr_accessor :meth, :action, :data, :attack, :form
 
       class << self
         def attacks
@@ -24,7 +24,7 @@ module Relevance
 
       def initialize(form, attack = Relevance::Tarantula::BasicAttack.new)
         @form = form
-        @method = form.method
+        @meth = form.method
         @action = form.action
         @attack = attack
         @data = mutate_selects(form).merge(mutate_text_areas(form)).merge(mutate_inputs(form))
@@ -32,7 +32,7 @@ module Relevance
 
       def crawl
         begin
-          response = form.crawler.submit(method, action, data)
+          response = form.crawler.submit(meth, action, data)
           log "Response #{response.code} for #{self}"
         rescue ActiveRecord::RecordNotFound => e
           log "Skipping #{action}, presumed ok that record is missing"
@@ -47,7 +47,7 @@ module Relevance
       end
 
       def to_s
-        "#{action} #{method} #{data.inspect} #{attack.inspect}"
+        "#{action} #{meth} #{data.inspect} #{attack.inspect}"
       end
 
       # a form's signature is what makes it unique (e.g. action + fields)
