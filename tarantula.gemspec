@@ -3,11 +3,11 @@ $:.push File.expand_path("../lib", __FILE__)
 require "relevance/tarantula/version"
 
 Gem::Specification.new do |s|
-  s.name        = "tarantula"
+  s.name        = "codez-tarantula"
   s.version     = Relevance::Tarantula::VERSION
-  s.authors     = ["Relevance, Inc."]
-  s.email       = ["opensource@thinkrelevance.com"]
-  s.homepage    = "https://github.com/relevance/tarantula"
+  s.authors     = ["Relevance, Inc.", "code!z"]
+  s.email       = ["spam@codez.ch"]
+  s.homepage    = "https://github.com/codez/tarantula"
   s.summary     = %q{A big hairy fuzzy spider that crawls your site, wreaking havoc}
   s.description = "Tarantula is a big fuzzy spider. It crawls your Rails 2.3 and 3.x applications, fuzzing data to see what breaks."
 
