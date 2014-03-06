@@ -31,7 +31,7 @@ module Relevance
         @integration_test.meta.attr_accessor :response
       end
 
-      [:get, :post, :put, :delete].each do |verb|
+      [:get, :post, :put, :patch, :delete].each do |verb|
         define_method(verb) do |url, *args|
           response = nil
           begin
