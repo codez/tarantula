@@ -18,4 +18,6 @@ end
 
 if defined? ActionController::IntegrationTest
   ActionController::IntegrationTest.class_eval { include Relevance::CoreExtensions::TestCaseExtensions }
+elsif defined? ActionDispatch::IntegrationTest
+  ActionDispatch::IntegrationTest.class_eval { include Relevance::CoreExtensions::TestCaseExtensions }
 end

@@ -1,3 +1,4 @@
+require 'rails'
 require 'active_record'
 require 'active_record/base'
 require File.expand_path(File.join(File.dirname(__FILE__), "rails_integration_proxy"))

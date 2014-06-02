@@ -6,10 +6,10 @@ end
 require "rails/version"
 puts "==== Testing with Rails #{Rails::VERSION::STRING} ===="
 
-require 'relevance/tarantula'
 require 'bundler'
 Bundler.require
 require 'ostruct'
+require 'relevance/tarantula'
 
 def test_output_dir
   File.join(File.dirname(__FILE__), "..", "tmp", "test_output")

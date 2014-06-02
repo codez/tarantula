@@ -14,6 +14,7 @@ describe "TestCase extensions" do
   end
 
   it "should get mixed into ActionController::IntegrationTest" do
-    ActionController::IntegrationTest.ancestors.should include(Relevance::CoreExtensions::TestCaseExtensions)
+    klass = defined?(ActionController::IntegrationTest) ?  ActionController::IntegrationTest :  ActionDispatch::IntegrationTest
+    klass.ancestors.should include(Relevance::CoreExtensions::TestCaseExtensions)
   end
 end

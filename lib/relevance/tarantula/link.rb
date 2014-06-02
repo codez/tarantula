@@ -1,3 +1,5 @@
+require 'action_view'
+
 module Relevance
   module Tarantula
 
@@ -76,7 +78,7 @@ module Relevance
                          'get'
                     end
       end
-      
+
       def url
         href
       end

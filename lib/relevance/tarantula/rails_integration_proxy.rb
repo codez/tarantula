@@ -1,4 +1,8 @@
-require 'test/unit'
+begin
+  require 'minitest/unit'
+rescue LoadError
+  require 'test/unit'
+end
 
 module Relevance
   module Tarantula
