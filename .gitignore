@@ -10,3 +10,5 @@ coverage
 Gemfile.lock
 .project
 .rvmrc
+.idea/
+tarantula.iml

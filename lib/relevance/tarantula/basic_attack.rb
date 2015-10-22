@@ -17,11 +17,13 @@ module Relevance
       end
 
       def input(input_field)
+        return input_field['value'] if input_field['type'] == 'hidden'
+
         case input_field['name']
         when /amount/         then random_int
         when /_id$/           then random_whole_number
         when /uploaded_data/  then nil
-        when nil              then input['value']
+        when nil              then input_field['value']
         else
           random_int
         end

@@ -1,3 +1,9 @@
+v0.5.4
+* Do not change values of hidden fields
+
+v0.5.3
+* Rails 4.1 compatibility
+
 v0.5.1
 * Rescue exceptions for Rails 3 integration tests and return them as 404/500 responses.
 
@@ -22,9 +28,9 @@ v0.1.8 Add timeouts for crawls to help really long builds [Rob Sanheim]
 
 v0.1.7 Minor clean up [Rob Sanheim]
 
-v0.1.6 
+v0.1.6
 	* add testing for all Rails versions 2.0.2 and up
-	* various clean up and housekeeping tasks; 
+	* various clean up and housekeeping tasks;
 	* start Ruby 1.9 work (but we need Hpricot)
 	* show 50 chars of URL, not 30
 	* ensure that ActiveRecord gets loaded correctly for the crawler, so that it can rescue RecordNotFound exceptions
@@ -40,7 +46,7 @@ v0.1.2 Remove dependency on Facets gem [Aaron Bedra]
 
 v0.1.1 Bugfix: Add ability to handle anchor tags that lack an href attribute #13 [Kevin Gisi]
 
-v0.1.0 
+v0.1.0
 * Improve the generated test template to include inline documentation and make the simple case simple [Jason Rudolph]
 * Update README to better serve first-time users [Jason Rudolph]
 * Update development dependencies declarations [Jason Rudolph]
@@ -48,7 +54,7 @@ v0.1.0
 ** Convert test suite to micronaut
 ** Replace Echoe with Jeweler for gem management
 ** Remove unused code
-    
+
 v0.0.8.1
 * Fix numerous installation and initial setup issues
 * Enhance rake tasks to support use of Tarantula in a continuous integration environment
@@ -59,7 +65,7 @@ v0.0.8.1
 ** Include example of adding a custom attack handler
 * Simplify design to address concerns about hard-to-read fonts
 
-v0.0.5 
+v0.0.5
 * Make sure we don't include Relevance::Tarantula into Object - will cause issues with Rails dependencies and is a bad idea in general
 * Update Rakefile for development dependencies
 * Other small clean up tasks

@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Relevance::Tarantula::FormSubmission do
-  
+
   describe "with a good form" do
     # TODO: add more from field types to this example form as needed
     before do
@@ -14,7 +14,7 @@ describe Relevance::Tarantula::FormSubmission do
           <select id="foo_opened_on_1i" name="foo[opened_on(1i)]">
             <option value="2003">2003</option>
             <option value="2004">2004</option>
-          </select> 
+          </select>
         </form>
       })
     end
@@ -29,7 +29,7 @@ describe Relevance::Tarantula::FormSubmission do
         response.content_type.should == "text/plain"
         response.body.should == "ActiveRecord::RecordNotFound"
       end
-      
+
       it "submits the form and logs response" do
         doc = Hpricot('<form action="/action" method="post"/>')
         form = make_form(doc.at('form'))
@@ -38,7 +38,7 @@ describe Relevance::Tarantula::FormSubmission do
         fs.expects(:log).with("Response 200 for #{fs}")
         fs.crawl
       end
-      
+
     end
 
     describe "with default attack" do
@@ -46,50 +46,50 @@ describe Relevance::Tarantula::FormSubmission do
         @form = make_form(@tag.at('form'))
         @fs = Relevance::Tarantula::FormSubmission.new(@form)
       end
-  
+
       it "can mutate text areas" do
         @fs.attack.stubs(:random_int).returns("42")
         @fs.mutate_text_areas(@form).should == {"comment" => "42"}
       end
-  
+
       it "can mutate selects" do
         Hpricot::Elements.any_instance.stubs(:sample).returns(stub(:[] => "2006-stub"))
         @fs.mutate_selects(@form).should == {"foo[opened_on(1i)]" => "2006-stub"}
       end
-  
+
       it "can mutate inputs" do
         @fs.attack.stubs(:random_int).returns("43")
-        @fs.mutate_inputs(@form).should == {"commit"=>"43", "secret"=>"43", "email"=>"43"}
+        @fs.mutate_inputs(@form).should == {"commit"=>"43", "secret"=>"secret", "email"=>"43"}
       end
 
       it "has a signature based on action and fields" do
         @fs.signature.should == ['/session', [
-          "comment", 
-          "commit", 
-          "email", 
-          "foo[opened_on(1i)]", 
+          "comment",
+          "commit",
+          "email",
+          "foo[opened_on(1i)]",
           "secret"],
           @fs.attack.name]
       end
-  
+
       it "has a friendly to_s" do
         @fs.to_s.should =~ %r{^/session post}
       end
     end
-    
+
     describe "with a custom attack" do
       before do
         @form = make_form(@tag.at('form'))
-        @attack = Relevance::Tarantula::Attack.new(:name => 'foo_name', 
-                                                   :input => 'foo_code', 
+        @attack = Relevance::Tarantula::Attack.new(:name => 'foo_name',
+                                                   :input => 'foo_code',
                                                    :output => 'foo_code')
         @fs = Relevance::Tarantula::FormSubmission.new(@form, @attack)
       end
-      
+
       it "can mutate text areas" do
         @fs.mutate_text_areas(@form).should == {"comment" => "foo_code"}
       end
-      
+
       it "can mutate selects" do
         Hpricot::Elements.any_instance.stubs(:sample).returns(stub(:[] => "2006-stub"))
         @fs.mutate_selects(@form).should == {"foo[opened_on(1i)]" => "2006-stub"}
@@ -101,10 +101,10 @@ describe Relevance::Tarantula::FormSubmission do
 
       it "has a signature based on action,  fields, and attack name" do
         @fs.signature.should == ['/session', [
-          "comment", 
-          "commit", 
-          "email", 
-          "foo[opened_on(1i)]", 
+          "comment",
+          "commit",
+          "email",
+          "foo[opened_on(1i)]",
           "secret"],
           "foo_name"
         ]
@@ -134,7 +134,7 @@ describe Relevance::Tarantula::FormSubmission do
       end
     end
   end
-  
+
   describe "with a crummy form" do
     before do
       @tag = Hpricot(%q{
@@ -143,7 +143,7 @@ describe Relevance::Tarantula::FormSubmission do
         </form>
       })
     end
-    
+
     describe "with default attack" do
       before do
         @form = make_form(@tag.at('form'))
@@ -167,5 +167,5 @@ describe Relevance::Tarantula::FormSubmission do
     end
 
   end
-  
+
 end
