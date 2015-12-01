@@ -208,14 +208,21 @@ module Relevance
         end
       end
 
-      # append delete requests to the end of the queue, all others just before the first delete request
       def append_to_queue(request)
-        if request.meth != 'delete' && index = @crawl_queue.index {|r| r.meth == 'delete' }
-          @crawl_queue.insert(index, request)
-        elsif request.meth == 'delete' && parent_index = @crawl_queue.index {|r| r.meth == 'delete' && request.url.start_with?(r.url) }
-          @crawl_queue.insert(parent_index, request)
+        @crawl_queue.insert(index_to_insert(request), request)
+      end
+
+      # append get requests before others, delete requests to the end of the queue,
+      # all others just before the first delete request
+      def index_to_insert(request)
+        case request.meth
+        when 'get'
+          last_get = @crawl_queue.rindex { |r| r.meth == 'get' } || -1
+          last_get + 1
+        when 'delete'
+          @crawl_queue.index {|r| r.meth == 'delete' && request.url.start_with?(r.url) } || -1
         else
-          @crawl_queue << request
+          @crawl_queue.index {|r| r.meth == 'delete' } || -1
         end
       end
 
